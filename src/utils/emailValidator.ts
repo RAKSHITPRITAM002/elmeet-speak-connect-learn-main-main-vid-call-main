@@ -276,7 +276,56 @@ export const suggestDomains = (partialDomain: string): string[] => {
   if (!partialDomain) return [];
   
   const lowerPartial = partialDomain.toLowerCase();
+  
+  // First try exact substring matches
+  const exactMatches = validEmailDomains
+    .filter(domain => domain.includes(lowerPartial));
+  
+  if (exactMatches.length > 0) {
+    return exactMatches.slice(0, 5); // Limit to 5 suggestions
+  }
+  
+  // If no exact matches, try fuzzy matching using Levenshtein distance
   return validEmailDomains
-    .filter(domain => domain.includes(lowerPartial))
+    .map(domain => ({
+      domain,
+      distance: levenshteinDistance(domain, lowerPartial)
+    }))
+    .filter(item => item.distance <= 3) // Only include close matches
+    .sort((a, b) => a.distance - b.distance) // Sort by closest match
+    .map(item => item.domain)
     .slice(0, 5); // Limit to 5 suggestions
+};
+
+/**
+ * Calculate Levenshtein distance between two strings
+ * This helps find similar domains with typos
+ * @param a First string
+ * @param b Second string
+ * @returns Distance value (lower means more similar)
+ */
+const levenshteinDistance = (a: string, b: string): number => {
+  const matrix: number[][] = [];
+
+  // Initialize the matrix
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
+  }
+
+  // Fill the matrix
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      const cost = a[j - 1] === b[i - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,      // deletion
+        matrix[i][j - 1] + 1,      // insertion
+        matrix[i - 1][j - 1] + cost // substitution
+      );
+    }
+  }
+
+  return matrix[b.length][a.length];
 };
