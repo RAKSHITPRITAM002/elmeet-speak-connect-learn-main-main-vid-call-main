@@ -568,7 +568,8 @@ const RolePlay: React.FC<RolePlayProps> = ({
                     id="scenario-title"
                     placeholder="Enter scenario title"
                     value={newScenario.title}
-                    onChange={(e: { target: { value: any; }; }) => setNewScenario((prev: any) => ({ ...prev, title: e.target.value }))}
+                    onChange={(e) => setNewScenario((prev) => ({ ...prev, title: e.target.value }))}
+                    className="bg-white text-black"
                   />
                 </div>
 
@@ -578,7 +579,8 @@ const RolePlay: React.FC<RolePlayProps> = ({
                     id="scenario-description"
                     placeholder="Enter scenario description"
                     value={newScenario.description}
-                    onChange={(e: { target: { value: any; }; }) => setNewScenario((prev: any) => ({ ...prev, description: e.target.value }))}
+                    onChange={(e) => setNewScenario((prev) => ({ ...prev, description: e.target.value }))}
+                    className="bg-white text-black"
                   />
                 </div>
 
@@ -588,7 +590,8 @@ const RolePlay: React.FC<RolePlayProps> = ({
                     id="scenario-setting"
                     placeholder="Describe the setting of the scenario"
                     value={newScenario.setting || ""}
-                    onChange={(e: { target: { value: any; }; }) => setNewScenario((prev: any) => ({ ...prev, setting: e.target.value }))}
+                    onChange={(e) => setNewScenario((prev) => ({ ...prev, setting: e.target.value }))}
+                    className="bg-white text-black"
                   />
                 </div>
 
@@ -598,7 +601,8 @@ const RolePlay: React.FC<RolePlayProps> = ({
                     id="scenario-situation"
                     placeholder="Describe the situation or context"
                     value={newScenario.situation || ""}
-                    onChange={(e: { target: { value: any; }; }) => setNewScenario((prev: any) => ({ ...prev, situation: e.target.value }))}
+                    onChange={(e) => setNewScenario((prev) => ({ ...prev, situation: e.target.value }))}
+                    className="bg-white text-black"
                   />
                 </div>
 

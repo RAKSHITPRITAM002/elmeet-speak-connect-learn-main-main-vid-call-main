@@ -415,7 +415,7 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                     placeholder="Enter poll title"
                     value={newPoll.title}
                     onChange={(e) => setNewPoll((prev) => ({ ...prev, title: e.target.value }))}
-                    className="focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                    className="focus:border-blue-500 focus:ring-2 focus:ring-blue-500 bg-white text-black"
                     autoFocus
                   />
                 </div>
@@ -427,7 +427,7 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                     placeholder="Enter poll description"
                     value={newPoll.description || ""}
                     onChange={(e) => setNewPoll((prev) => ({ ...prev, description: e.target.value }))}
-                    className="min-h-[80px] focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                    className="min-h-[80px] focus:border-blue-500 focus:ring-2 focus:ring-blue-500 bg-white text-black"
                   />
                 </div>
 
@@ -463,7 +463,7 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                             placeholder={`Option ${index + 1}`}
                             value={option.text}
                             onChange={(e) => updateOptionText(index, e.target.value)}
-                            className="focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                            className="focus:border-blue-500 focus:ring-2 focus:ring-blue-500 bg-white text-black"
                           />
                           <Button
                             variant="outline"

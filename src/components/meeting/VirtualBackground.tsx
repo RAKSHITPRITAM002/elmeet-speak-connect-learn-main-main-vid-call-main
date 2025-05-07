@@ -158,10 +158,10 @@ const VirtualBackground: React.FC<VirtualBackgroundProps> = ({
 
   return (
     <div className="virtual-background h-full flex flex-col">
-      <div className="header flex justify-between items-center p-4 border-b">
+      <div className="header flex justify-between items-center p-4 border-b bg-white text-black">
         <h2 className="text-xl font-semibold">Virtual Background</h2>
 
-        <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+        <Button variant="default" onClick={() => fileInputRef.current?.click()}>
           <Upload size={16} className="mr-2" />
           Upload Image
         </Button>
@@ -180,14 +180,14 @@ const VirtualBackground: React.FC<VirtualBackgroundProps> = ({
         onValueChange={(value) => setActiveTab(value as "backgrounds" | "blur")}
         value={activeTab}
       >
-        <div className="px-4 pt-2">
-          <TabsList className="w-full">
-            <TabsTrigger value="backgrounds" className="flex-1">
+        <div className="px-4 pt-2 bg-white">
+          <TabsList className="w-full bg-gray-100">
+            <TabsTrigger value="backgrounds" className="flex-1 text-black font-medium">
               <ImageIcon size={16} className="mr-2" />
               Backgrounds
             </TabsTrigger>
-            <TabsTrigger value="blur" className="flex-1">
-              Blur
+            <TabsTrigger value="blur" className="flex-1 text-black font-medium">
+              Blur Effect
             </TabsTrigger>
           </TabsList>
         </div>
@@ -196,9 +196,9 @@ const VirtualBackground: React.FC<VirtualBackgroundProps> = ({
           <ScrollArea className="h-full">
             <div className="space-y-4">
               {/* Default backgrounds */}
-              <div>
-                <h3 className="text-sm font-medium mb-2">Default Backgrounds</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="bg-white p-4 rounded-lg text-black">
+                <h3 className="text-lg font-medium mb-4">Default Backgrounds</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {defaultBackgrounds.map(background => (
                     <Card
                       key={background.id}
@@ -209,8 +209,9 @@ const VirtualBackground: React.FC<VirtualBackgroundProps> = ({
                     >
                       <CardContent className="p-0 relative">
                         {background.type === "none" ? (
-                          <div className="h-24 bg-gray-100 flex items-center justify-center">
-                            <X size={24} className="text-gray-400" />
+                          <div className="h-24 bg-gray-100 flex items-center justify-center text-black">
+                            <X size={24} className="text-gray-600" />
+                            <span className="ml-2">No Background</span>
                           </div>
                         ) : (
                           <div
@@ -230,7 +231,7 @@ const VirtualBackground: React.FC<VirtualBackgroundProps> = ({
                             </div>
                           )}
                         </div>
-                        <div className="p-2 text-center text-sm truncate">
+                        <div className="p-2 text-center text-sm truncate bg-white text-black font-medium">
                           {background.name}
                         </div>
                       </CardContent>
@@ -241,9 +242,9 @@ const VirtualBackground: React.FC<VirtualBackgroundProps> = ({
 
               {/* Uploaded backgrounds */}
               {uploadedBackgrounds.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-medium mb-2">Your Backgrounds</h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="bg-white p-4 rounded-lg text-black mt-6">
+                  <h3 className="text-lg font-medium mb-4">Your Uploaded Backgrounds</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {uploadedBackgrounds.map(background => (
                       <Card
                         key={background.id}
@@ -281,7 +282,7 @@ const VirtualBackground: React.FC<VirtualBackgroundProps> = ({
                               </Button>
                             )}
                           </div>
-                          <div className="p-2 text-center text-sm truncate">
+                          <div className="p-2 text-center text-sm truncate bg-white text-black font-medium">
                             {background.name}
                           </div>
                         </CardContent>
@@ -295,12 +296,12 @@ const VirtualBackground: React.FC<VirtualBackgroundProps> = ({
         </TabsContent>
 
         <TabsContent value="blur" className="flex-1 p-4">
-          <div className="space-y-6">
+          <div className="space-y-6 bg-white p-4 rounded-lg text-black">
             <div>
-              <h3 className="text-sm font-medium mb-4">Background Blur</h3>
+              <h3 className="text-lg font-medium mb-4">Background Blur</h3>
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-sm font-medium">
                     <span>Blur Amount</span>
                     <span>{blurAmount}px</span>
                   </div>
@@ -325,11 +326,11 @@ const VirtualBackground: React.FC<VirtualBackgroundProps> = ({
                 </div>
 
                 <Button
-                  className="w-full"
+                  className="w-full text-lg font-medium py-6"
                   onClick={applyBlurBackground}
                   variant={isSelected("blur") ? "secondary" : "default"}
                 >
-                  {isSelected("blur") ? "Applied" : "Apply Blur"}
+                  {isSelected("blur") ? "✓ Blur Applied" : "Apply Blur Effect"}
                 </Button>
               </div>
             </div>

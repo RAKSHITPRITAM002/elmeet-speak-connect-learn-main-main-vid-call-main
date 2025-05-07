@@ -207,11 +207,21 @@ const PreJoinMeetingEnhanced: React.FC<PreJoinMeetingProps> = ({ meetingId, onJo
                       autoPlay
                       playsInline
                       muted
-                      className={`relative z-10 w-full h-full object-${selectedBackground.fit || 'cover'} ${selectedBackground.type === "blur" ? "backdrop-blur-md" : ""}`}
+                      className={`relative z-10 w-full h-full object-${selectedBackground.fit || 'cover'}`}
                       style={{
-                        backgroundColor: selectedBackground.type !== "none" ? 'transparent' : undefined
+                        backgroundColor: selectedBackground.type !== "none" ? 'transparent' : undefined,
+                        mixBlendMode: selectedBackground.type === "image" ? "normal" : "normal"
                       }}
                     />
+                    {selectedBackground.type === "blur" && (
+                      <div 
+                        className="absolute inset-0 z-20 pointer-events-none"
+                        style={{ 
+                          backdropFilter: "blur(10px)",
+                          WebkitBackdropFilter: "blur(10px)"
+                        }}
+                      />
+                    )}
                   </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">

@@ -105,7 +105,14 @@ const renderParticipantVideo = (participant: Participant, isMain: boolean) => {
         )}
         
         <div className={`w-full h-full ${!participant.background || participant.background.type === 'none' ? 'bg-gray-800' : ''} flex items-center justify-center relative z-10`}>
-          <div className={`${isMain ? 'text-2xl' : 'text-sm'} text-white`}>
+          {/* This is where the actual video would be rendered in a real implementation */}
+          <video 
+            className="w-full h-full object-cover"
+            autoPlay
+            playsInline
+            muted
+          />
+          <div className={`${isMain ? 'text-2xl' : 'text-sm'} text-white absolute`}>
             {participant.name}'s Video
           </div>
         </div>
