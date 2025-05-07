@@ -415,6 +415,8 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                     placeholder="Enter poll title"
                     value={newPoll.title}
                     onChange={(e: { target: { value: any; }; }) => setNewPoll((prev: any) => ({ ...prev, title: e.target.value }))}
+                    className="focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                    autoFocus
                   />
                 </div>
 
@@ -425,6 +427,7 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                     placeholder="Enter poll description"
                     value={newPoll.description || ""}
                     onChange={(e: { target: { value: any; }; }) => setNewPoll((prev: any) => ({ ...prev, description: e.target.value }))}
+                    className="min-h-[80px] focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -460,6 +463,7 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                             placeholder={`Option ${index + 1}`}
                             value={option.text}
                             onChange={(e: { target: { value: string; }; }) => updateOptionText(index, e.target.value)}
+                            className="focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                           />
                           <Button
                             variant="outline"
@@ -618,6 +622,8 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                                 placeholder="Type your answer here..."
                                 value={userResponses[poll.id]?.[0] || ""}
                                 onChange={(e: { target: { value: string; }; }) => handleOpenEndedResponse(poll.id, e.target.value)}
+                                className="min-h-[100px] focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                                autoFocus
                               />
                             )}
                           </div>

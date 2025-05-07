@@ -19,12 +19,12 @@ interface SubscriptionCheckoutProps {
   onCancel?: () => void;
 }
 
-const SubscriptionCheckout: React.FC<SubscriptionCheckoutProps> = ({
+const SubscriptionCheckout = ({
   planType,
   billingCycle,
   onSuccess,
   onCancel
-}) => {
+}: SubscriptionCheckoutProps): JSX.Element => {
   const { user } = useAuth();
   const { upgradePlan, getCurrentPlan } = useSubscription();
   const { toast } = useToast();
@@ -96,78 +96,141 @@ const SubscriptionCheckout: React.FC<SubscriptionCheckoutProps> = ({
     setIsProcessing(true);
 
     try {
-      // Simulate redirect to payment gateway
+      // Create payment intent and payment intent  to payment gateway
       if (paymentMethod === 'credit_card') {
-        // Simulate Stripe redirect
         toast({
-          title: 'Redirecting to Stripe',
-          description: 'You will be redirected to Stripe to complete your payment.',
+          title: 'Preparing payment',
+          description: 'You will be redirected to complete your payment.',
           variant: 'default'
         });
 
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        try {
+          // In a real implementation, this would call your backend API to create a payment intent
+          // For now, we'll simulate the API call and redirect
+          
+          // Create a form to submit to Stripe Checkout
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = 'https://checkout.stripe.com/pay';
+          form.target = '_blank';
 
-        // Show a confirmation dialog to simulate Stripe payment
-        if (window.confirm(`You are about to be charged $${getPrice()} for the ${planType.charAt(0).toUpperCase() + planType.slice(1)} plan. Proceed with payment?`)) {
-          // Simulate successful payment
-          await upgradePlan(planType, billingCycle);
+          // Add necessary fields
+          const fields = {
+            'amount': Math.round(parseFloat(getPrice()) * 100), // Convert to cents
+            'currency': 'usd',
+            'description': `${planType.charAt(0).toUpperCase() + planType.slice(1)} Plan (${billingCycle})`,
+            'key': 'pk_test_sample', // This would be your actual publishable key
+            'name': 'ElMeet',
+            'email': user.email,
+            'client_reference_id': user.email,
+            'success_url': window.location.origin + '/profile?payment_success=true',
+            'cancel_url': window.location.origin + '/profile?payment_canceled=true'
+          };
 
-          // Show success message
-          toast({
-            title: 'Payment successful!',
-            description: `You are now on the ${planType.charAt(0).toUpperCase() + planType.slice(1)} plan.`,
-            variant: 'default'
+          // Add fields to form
+          Object.entries(fields).forEach(([key, value]) => {
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = key;
+            hiddenField.value = value.toString();
+            form.appendChild(hiddenField);
           });
 
-          // Call success callback
-          if (onSuccess) {
-            onSuccess();
-          } else {
-            navigate('/profile');
-          }
-        } else {
-          // User canceled payment
+          // Add form to body and submit
+          document.body.appendChild(form);
+          form.submit();
+          
+          // Remove form after submission
+          document.body.removeChild(form);
+          
+          // Show success message
           toast({
-            title: 'Payment canceled',
-            description: 'You have canceled the payment process.',
+            title: 'Redirecting to payment page',
+            description: 'Please complete your payment in the new window.',
+            variant: 'default'
+          });
+          
+          // We don't call upgradePlan here - it should be called after successful payment confirmation
+          // This would typically be handled by a webhook from Stripe to your backend
+          
+          // For demo purposes, we'll simulate a successful payment after a delay
+          setTimeout(() => {
+            if (onSuccess) {
+              onSuccess();
+            } else {
+              navigate('/profile');
+            }
+          }, 3000);
+        } catch (error) {
+          console.error('Error creating payment session:', error);
+          toast({
+            title: 'Payment error',
+            description: 'There was an error setting up the payment. Please try again.',
             variant: 'destructive'
           });
         }
       } else if (paymentMethod === 'paypal') {
-        // Simulate PayPal redirect
         toast({
-          title: 'Redirecting to PayPal',
+          title: 'Preparing payment',
           description: 'You will be redirected to PayPal to complete your payment.',
           variant: 'default'
         });
 
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        try {
+          // Create a form to submit to PayPal
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = 'https://www.paypal.com/cgi-bin/webscr';
+          form.target = '_blank';
 
-        // Show a confirmation dialog to simulate PayPal payment
-        if (window.confirm(`You are about to be charged $${getPrice()} for the ${planType.charAt(0).toUpperCase() + planType.slice(1)} plan via PayPal. Proceed with payment?`)) {
-          // Simulate successful payment
-          await upgradePlan(planType, billingCycle);
+          // Add necessary fields
+          const fields = {
+            'cmd': '_xclick',
+            'business': 'merchant@elmeet.com', // Your PayPal business email
+            'item_name': `ElMeet ${planType.charAt(0).toUpperCase() + planType.slice(1)} Plan (${billingCycle})`,
+            'amount': getPrice(),
+            'currency_code': 'USD',
+            'return': window.location.origin + '/profile?payment_success=true',
+            'cancel_return': window.location.origin + '/profile?payment_canceled=true',
+            'custom': user.email
+          };
 
-          // Show success message
-          toast({
-            title: 'Payment successful!',
-            description: `You are now on the ${planType.charAt(0).toUpperCase() + planType.slice(1)} plan.`,
-            variant: 'default'
+          // Add fields to form
+          Object.entries(fields).forEach(([key, value]) => {
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = key;
+            hiddenField.value = value.toString();
+            form.appendChild(hiddenField);
           });
 
-          // Call success callback
-          if (onSuccess) {
-            onSuccess();
-          } else {
-            navigate('/profile');
-          }
-        } else {
-          // User canceled payment
+          // Add form to body and submit
+          document.body.appendChild(form);
+          form.submit();
+          
+          // Remove form after submission
+          document.body.removeChild(form);
+          
+          // Show success message
           toast({
-            title: 'Payment canceled',
-            description: 'You have canceled the payment process.',
+            title: 'Redirecting to PayPal',
+            description: 'Please complete your payment in the new window.',
+            variant: 'default'
+          });
+          
+          // For demo purposes, we'll simulate a successful payment after a delay
+          setTimeout(() => {
+            if (onSuccess) {
+              onSuccess();
+            } else {
+              navigate('/profile');
+            }
+          }, 3000);
+        } catch (error) {
+          console.error('Error creating PayPal session:', error);
+          toast({
+            title: 'Payment error',
+            description: 'There was an error setting up the payment. Please try again.',
             variant: 'destructive'
           });
         }

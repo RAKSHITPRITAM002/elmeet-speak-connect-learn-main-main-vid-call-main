@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { useAuth } from "../contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/use-toast";
+import UserSubscriptionHistory from "@/components/profile/UserSubscriptionHistorynew";
 import {
   User, Settings, CreditCard, Clock, Calendar, LogOut,
   Shield, Bell, Key, HelpCircle, FileText, BarChart4
@@ -37,29 +39,48 @@ interface Subscription {
 
 const Profile = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("account");
   const [meetingHistory, setMeetingHistory] = useState<MeetingHistory[]>([]);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated and check for payment status
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
     }
   }, [isAuthenticated, navigate]);
 
-  // Load user data
+  // Load user data and check for payment status
   useEffect(() => {
-    // In a real app, you would fetch this data from your API
-    // For this example, we'll use mock data
+    const searchParams = new URLSearchParams(location.search);
+    const paymentSuccess = searchParams.get('payment_success');
+    const paymentCanceled = searchParams.get('payment_canceled');
+    
+    if (paymentSuccess === 'true') {
+      toast({
+        title: 'Payment successful!',
+        description: 'Your subscription has been activated.',
+        variant: 'default',
+      });
+      navigate(location.pathname, { replace: true });
+    } else if (paymentCanceled === 'true') {
+      toast({
+        title: 'Payment canceled',
+        description: 'Your payment was not completed.',
+        variant: 'destructive',
+      });
+      navigate(location.pathname, { replace: true });
+    }
 
     // Mock meeting history
     const mockMeetingHistory: MeetingHistory[] = [
       {
         id: "meet-1",
         title: "Team Weekly Sync",
-        date: new Date(Date.now() - 86400000 * 2), // 2 days ago
+        date: new Date(Date.now() - 86400000 * 2),
         duration: 45,
         participants: 8,
         recordingAvailable: true
@@ -67,7 +88,7 @@ const Profile = () => {
       {
         id: "meet-2",
         title: "Project Kickoff",
-        date: new Date(Date.now() - 86400000 * 5), // 5 days ago
+        date: new Date(Date.now() - 86400000 * 5),
         duration: 60,
         participants: 12,
         recordingAvailable: true
@@ -75,7 +96,7 @@ const Profile = () => {
       {
         id: "meet-3",
         title: "Client Presentation",
-        date: new Date(Date.now() - 86400000 * 7), // 7 days ago
+        date: new Date(Date.now() - 86400000 * 7),
         duration: 30,
         participants: 5,
         recordingAvailable: false
@@ -83,7 +104,7 @@ const Profile = () => {
       {
         id: "meet-4",
         title: "Language Practice Session",
-        date: new Date(Date.now() - 86400000 * 10), // 10 days ago
+        date: new Date(Date.now() - 86400000 * 10),
         duration: 90,
         participants: 3,
         recordingAvailable: true
@@ -94,8 +115,8 @@ const Profile = () => {
     const mockSubscription: Subscription = {
       plan: "pro",
       status: "active",
-      startDate: new Date(Date.now() - 86400000 * 30), // 30 days ago
-      endDate: new Date(Date.now() + 86400000 * 335), // 335 days from now
+      startDate: new Date(Date.now() - 86400000 * 30),
+      endDate: new Date(Date.now() + 86400000 * 335),
       features: [
         "Unlimited meetings",
         "Up to 100 participants",
@@ -115,9 +136,8 @@ const Profile = () => {
 
     setMeetingHistory(mockMeetingHistory);
     setSubscription(mockSubscription);
-  }, []);
+  }, [location, navigate, toast]);
 
-  // Format date
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -126,7 +146,6 @@ const Profile = () => {
     });
   };
 
-  // Format time
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -134,25 +153,17 @@ const Profile = () => {
     });
   };
 
-  // Format duration
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-
-    if (hours > 0) {
-      return `${hours}h ${mins}m`;
-    }
-
-    return `${mins}m`;
+    return `${hours > 0 ? `${hours}h ` : ''}${mins}m`;
   };
 
-  // Handle logout
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  // If not authenticated, show loading
   if (!isAuthenticated || !user) {
     return <div>Loading...</div>;
   }
@@ -170,22 +181,22 @@ const Profile = () => {
                   <div className="flex flex-col items-center space-y-3 py-4">
                     <Avatar className="h-24 w-24">
                       <AvatarImage src={user?.picture || ""} alt={user?.name || "User"} />
-                      <AvatarFallback className="text-2xl">{user?.name?.charAt(0) || "U"}</AvatarFallback>
+                      <AvatarFallback className="text-2xl">
+                        {user?.name?.charAt(0) || "U"}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="text-center">
                       <h2 className="text-xl font-bold">{user?.name}</h2>
                       <p className="text-sm text-gray-500">{user?.email}</p>
                     </div>
-                    {subscription && (
-                      <Badge className={
-                        subscription.plan === "free" ? "bg-gray-500" :
-                        subscription.plan === "basic" ? "bg-blue-500" :
-                        subscription.plan === "pro" ? "bg-purple-500" :
-                        "bg-green-500"
-                      }>
-                        {subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} Plan
-                      </Badge>
-                    )}
+                    <Badge className={
+                      subscription?.plan === "free" ? "bg-gray-500" :
+                      subscription?.plan === "basic" ? "bg-blue-500" :
+                      subscription?.plan === "pro" ? "bg-purple-500" :
+                      "bg-green-500"
+                    }>
+                      {subscription?.plan ? `${subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} Plan` : "Free Plan"}
+                    </Badge>
                   </div>
                 </CardContent>
               </Card>
@@ -204,10 +215,7 @@ const Profile = () => {
                     <Button
                       variant={activeTab === "subscription" ? "default" : "ghost"}
                       className="w-full justify-start"
-                      onClick={() => {
-                        console.log("Subscription button clicked");
-                        setActiveTab("subscription");
-                      }}
+                      onClick={() => setActiveTab("subscription")}
                     >
                       <CreditCard className="mr-2 h-4 w-4" />
                       Subscription
@@ -223,10 +231,7 @@ const Profile = () => {
                     <Button
                       variant={activeTab === "settings" ? "default" : "ghost"}
                       className="w-full justify-start"
-                      onClick={() => {
-                        console.log("Settings button clicked");
-                        setActiveTab("settings");
-                      }}
+                      onClick={() => setActiveTab("settings")}
                     >
                       <Settings className="mr-2 h-4 w-4" />
                       Settings
@@ -282,10 +287,7 @@ const Profile = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => {
-                            setActiveTab("settings");
-                            // In a real app, this would scroll to the password section
-                          }}
+                          onClick={() => setActiveTab("settings")}
                         >
                           <Key className="mr-2 h-4 w-4" />
                           Change Password
@@ -293,10 +295,7 @@ const Profile = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => {
-                            setActiveTab("settings");
-                            // In a real app, this would scroll to the notifications section
-                          }}
+                          onClick={() => setActiveTab("settings")}
                         >
                           <Bell className="mr-2 h-4 w-4" />
                           Notification Settings
@@ -304,10 +303,7 @@ const Profile = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => {
-                            setActiveTab("settings");
-                            // In a real app, this would scroll to the security section
-                          }}
+                          onClick={() => setActiveTab("settings")}
                         >
                           <Shield className="mr-2 h-4 w-4" />
                           Security Settings
@@ -319,98 +315,9 @@ const Profile = () => {
               )}
 
               {activeTab === "subscription" && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Subscription</CardTitle>
-                    <CardDescription>Manage your subscription plan and billing information</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {subscription ? (
-                      <>
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <h3 className={`text-xl font-bold ${
-                                subscription.plan === "free" ? "text-gray-700" :
-                                subscription.plan === "basic" ? "text-blue-700" :
-                                subscription.plan === "pro" ? "text-purple-700" :
-                                "text-green-700"
-                              }`}>
-                                {subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1)} Plan
-                              </h3>
-                              <p className="text-sm text-gray-500">
-                                {subscription.status === "active" ? "Active" :
-                                 subscription.status === "canceled" ? "Canceled" : "Expired"}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-2xl font-bold">${subscription.price.toFixed(2)}</div>
-                              <div className="text-sm text-gray-500">
-                                per {subscription.billingCycle === "monthly" ? "month" : "year"}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="mt-4 flex justify-between text-sm">
-                            <div>
-                              <div className="font-medium">Started on</div>
-                              <div>{formatDate(subscription.startDate)}</div>
-                            </div>
-                            {subscription.endDate && (
-                              <div>
-                                <div className="font-medium">Renews on</div>
-                                <div>{formatDate(subscription.endDate)}</div>
-                              </div>
-                            )}
-                            <div>
-                              <div className="font-medium">Auto-renew</div>
-                              <div>{subscription.autoRenew ? "Enabled" : "Disabled"}</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <h3 className="text-lg font-medium mb-2">Plan Features</h3>
-                          <ul className="space-y-2">
-                            {subscription.features.map((feature, index) => (
-                              <li key={index} className="flex items-center">
-                                <svg className="h-5 w-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                {feature}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2">
-                          <Button onClick={() => navigate("/pricing")}>Upgrade Plan</Button>
-                          <Button variant="outline" onClick={() => navigate("/subscription/billing")}>Manage Billing</Button>
-                          {subscription.status === "active" && (
-                            <Button
-                              variant="outline"
-                              className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                              onClick={() => {
-                                if (window.confirm("Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your billing period.")) {
-                                  console.log("Subscription cancelled");
-                                  // In a real app, this would call an API to cancel the subscription
-                                  alert("Your subscription has been canceled. You will have access until the end of your current billing period.");
-                                }
-                              }}
-                            >
-                              Cancel Subscription
-                            </Button>
-                          )}
-                        </div>
-                      </>
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-gray-500 mb-4">You don't have an active subscription.</p>
-                        <Button onClick={() => navigate("/pricing")}>Choose a Plan</Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                <UserSubscriptionHistory 
+                  onUpgrade={() => navigate("/pricing")} 
+                />
               )}
 
               {activeTab === "history" && (
@@ -446,11 +353,7 @@ const Profile = () => {
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => {
-                                      console.log(`Viewing recording for meeting ${meeting.id}`);
-                                      // In a real app, this would open the recording player
-                                      alert(`Opening recording for "${meeting.title}"`);
-                                    }}
+                                    onClick={() => alert(`Opening recording for "${meeting.title}"`)}
                                   >
                                     View Recording
                                   </Button>
@@ -458,11 +361,7 @@ const Profile = () => {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => {
-                                    console.log(`Viewing details for meeting ${meeting.id}`);
-                                    // In a real app, this would navigate to the meeting details page
-                                    alert(`Opening details for "${meeting.title}"`);
-                                  }}
+                                  onClick={() => alert(`Opening details for "${meeting.title}"`)}
                                 >
                                   Details
                                 </Button>
@@ -481,11 +380,7 @@ const Profile = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => {
-                        console.log("Calendar view clicked");
-                        // In a real app, this would switch to a calendar view
-                        alert("Calendar view is not available in this demo");
-                      }}
+                      onClick={() => alert("Calendar view is not available in this demo")}
                     >
                       <Calendar className="mr-2 h-4 w-4" />
                       Calendar View
@@ -493,11 +388,7 @@ const Profile = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => {
-                        console.log("Export history clicked");
-                        // In a real app, this would export the meeting history
-                        alert("Exporting meeting history as CSV...");
-                      }}
+                      onClick={() => alert("Exporting meeting history as CSV...")}
                     >
                       <FileText className="mr-2 h-4 w-4" />
                       Export History
@@ -646,11 +537,9 @@ const Profile = () => {
                     </Tabs>
                   </CardContent>
                   <CardFooter>
-                    <Button onClick={() => {
-                      console.log("Settings saved");
-                      // In a real app, this would save the settings to the backend
-                      alert("Settings saved successfully!");
-                    }}>Save Settings</Button>
+                    <Button onClick={() => alert("Settings saved successfully!")}>
+                      Save Settings
+                    </Button>
                   </CardFooter>
                 </Card>
               )}

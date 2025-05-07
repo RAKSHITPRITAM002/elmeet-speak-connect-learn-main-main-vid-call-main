@@ -1193,7 +1193,8 @@ const EnhancedRolePlay: React.FC<EnhancedRolePlayProps> = ({
             value={newScenario.title}
             onChange={(e) => setNewScenario({ ...newScenario, title: e.target.value })}
             placeholder="Enter scenario title"
-            className="mt-1"
+            className="mt-1 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+            autoFocus
           />
         </div>
         
@@ -1204,7 +1205,7 @@ const EnhancedRolePlay: React.FC<EnhancedRolePlayProps> = ({
             value={newScenario.description}
             onChange={(e) => setNewScenario({ ...newScenario, description: e.target.value })}
             placeholder="Enter scenario description"
-            className="mt-1"
+            className="mt-1 min-h-[80px] focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           />
         </div>
         

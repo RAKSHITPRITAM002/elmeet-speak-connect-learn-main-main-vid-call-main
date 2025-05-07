@@ -1156,7 +1156,8 @@ const LanguageTools: React.FC<LanguageToolsProps> = ({ meetingId }) => {
                 value={inputText}
                 onChange={handleInputChange}
                 placeholder="Type or use the character pad below"
-                className="pr-20"
+                className="pr-20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                autoFocus
               />
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-1">
                 <Button
@@ -1288,6 +1289,8 @@ const LanguageTools: React.FC<LanguageToolsProps> = ({ meetingId }) => {
                     onChange={(e: { target: { value: any; }; }) => setSearchTerm(e.target.value)}
                     placeholder={`Search ${availableLanguages.find(lang => lang.id === dictionaryLanguage)?.name || ""} dictionary`}
                     onKeyDown={(e: { key: string; }) => e.key === 'Enter' && searchDictionary()}
+                    className="focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                    autoFocus
                   />
                 </div>
                 <Button onClick={searchDictionary}>
