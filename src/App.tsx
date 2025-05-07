@@ -22,6 +22,9 @@ import BillingManagement from "./pages/BillingManagement";
 import MeetingPreJoin from "./pages/MeetingPreJoin";
 import MeetingPreJoinEnhanced from "./pages/MeetingPreJoinEnhanced";
 import MeetingPreJoinBackground from "./pages/MeetingPreJoinBackground";
+import CreatePoll from "./pages/CreatePoll";
+import CreateRolePlay from "./pages/CreateRolePlay";
+import RolePlayAssignment from "./pages/RolePlayAssignment";
 // Import contexts
 import { AuthProvider } from "./contexts/AuthContext";
 import { SubscriptionProvider } from "./contexts/SubscriptionContext";
@@ -57,6 +60,9 @@ const App = () => {
             <Route path="/meeting-prejoin/:meetingId?" element={<MeetingPreJoin />} />
             <Route path="/meeting-prejoin-enhanced/:meetingId?" element={<MeetingPreJoinEnhanced />} />
             <Route path="/meeting-prejoin-background/:meetingId?" element={<MeetingPreJoinBackground />} />
+            <Route path="/create-poll/:meetingId?" element={<CreatePoll />} />
+            <Route path="/create-role-play/:meetingId?" element={<CreateRolePlay />} />
+            <Route path="/role-play-assignment/:scenarioId/:meetingId?" element={<RolePlayAssignment />} />
 
             {/* Admin pages */}
             <Route path="/admin" element={<AdminDashboard />} />

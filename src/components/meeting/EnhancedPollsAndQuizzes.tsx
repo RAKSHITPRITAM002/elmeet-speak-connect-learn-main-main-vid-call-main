@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,7 +35,8 @@ import {
   AlertCircle,
   Shuffle,
   Layers,
-  Sparkles
+  Sparkles,
+  ExternalLink
 } from 'lucide-react';
 
 // Types
@@ -70,6 +72,7 @@ interface EnhancedPollsAndQuizzesProps {
   onSendPoll?: (poll: Poll) => void;
   onEndPoll?: (pollId: string) => void;
   onVote?: (pollId: string, optionIds: string[]) => void;
+  meetingId?: string;
 }
 
 const EnhancedPollsAndQuizzes: React.FC<EnhancedPollsAndQuizzesProps> = ({
@@ -77,8 +80,10 @@ const EnhancedPollsAndQuizzes: React.FC<EnhancedPollsAndQuizzesProps> = ({
   participants,
   onSendPoll,
   onEndPoll,
-  onVote
+  onVote,
+  meetingId
 }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'create' | 'active' | 'results' | 'templates'>('active');
   const [polls, setPolls] = useState<Poll[]>([]);
   const [templates, setTemplates] = useState<Poll[]>([]);
@@ -1330,7 +1335,19 @@ const EnhancedPollsAndQuizzes: React.FC<EnhancedPollsAndQuizzesProps> = ({
             <>
               <TabsContent value="create">
                 <ScrollArea className="h-[calc(100vh-200px)]">
-                  {renderCreateForm()}
+                  <div className="space-y-6">
+                    <div className="flex justify-center mb-4">
+                      <Button 
+                        onClick={() => navigate(meetingId ? `/create-poll/${meetingId}` : '/create-poll')}
+                        className="w-full max-w-md"
+                      >
+                        <ExternalLink size={16} className="mr-2" />
+                        Open Full Poll Creator
+                      </Button>
+                    </div>
+                    <Separator className="my-4" />
+                    {renderCreateForm()}
+                  </div>
                 </ScrollArea>
               </TabsContent>
               

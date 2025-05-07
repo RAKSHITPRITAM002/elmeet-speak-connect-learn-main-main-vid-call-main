@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,7 +35,8 @@ import {
   Languages, 
   Mic, 
   Video,
-  X
+  X,
+  ExternalLink
 } from 'lucide-react';
 
 // Types
@@ -79,6 +81,7 @@ interface EnhancedRolePlayProps {
   onStartScenario?: (scenarioId: string) => void;
   onEndScenario?: (scenarioId: string) => void;
   onSaveScenario?: (scenario: RolePlayScenario) => void;
+  meetingId?: string;
 }
 
 const EnhancedRolePlay: React.FC<EnhancedRolePlayProps> = ({
@@ -87,8 +90,10 @@ const EnhancedRolePlay: React.FC<EnhancedRolePlayProps> = ({
   onAssignRole,
   onStartScenario,
   onEndScenario,
-  onSaveScenario
+  onSaveScenario,
+  meetingId
 }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'scenarios' | 'active' | 'create' | 'templates'>('scenarios');
   const [scenarios, setScenarios] = useState<RolePlayScenario[]>([]);
   const [templates, setTemplates] = useState<RolePlayScenario[]>([]);
