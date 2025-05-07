@@ -4,8 +4,8 @@ import { useAuth } from 'contexts/AuthContext';
 import MediaPermissionPrompt from './MediaPermissionPrompt';
 import { ConferenceControls } from './ConferenceControls';
 import Chat from './Chat';
-import PollsAndQuizzes from './PollsAndQuizzes';
-import RolePlay from './RolePlay';
+import EnhancedPollsAndQuizzes from './EnhancedPollsAndQuizzes';
+import EnhancedRolePlay from './EnhancedRolePlay';
 import MultimediaPlayer from './MultimediaPlayer';
 import LanguageTools from './LanguageTools';
 import VirtualBackground from './VirtualBackground';
@@ -1178,7 +1178,8 @@ const VideoConferenceEnhanced: React.FC<VideoConferenceProps> = ({
                           backgroundPosition: 'center',
                           backgroundRepeat: 'no-repeat',
                           transform: 'scale(1.05)', /* Slightly scale up to avoid any gaps at edges */
-                          filter: 'brightness(0.9)' /* Slightly dim the background to make video more visible */
+                          filter: 'brightness(0.9)', /* Slightly dim the background to make video more visible */
+                          zIndex: 0 /* Ensure background is behind video */
                         }}
                       />
                     )}
@@ -1187,10 +1188,12 @@ const VideoConferenceEnhanced: React.FC<VideoConferenceProps> = ({
                       autoPlay
                       playsInline
                       muted
-                      className={`w-full h-full object-cover transition-all duration-500 ${!isVideoEnabled ? 'hidden' : ''} relative z-10`}
+                      className={`w-full h-full object-cover transition-all duration-500 ${!isVideoEnabled ? 'hidden' : ''}`}
                       style={{
                         filter: currentBackground.type === 'blur' ? `blur(${currentBackground.name.match(/\d+/)?.[0] || 5}px)` : 'none',
                         opacity: currentBackground.type === 'image' ? 0.9 : 1, // Make video slightly transparent when using image background
+                        position: 'relative',
+                        zIndex: 10
                       }}
                     />
 
@@ -1529,7 +1532,7 @@ const VideoConferenceEnhanced: React.FC<VideoConferenceProps> = ({
                     )}
 
                     {sidebarContent === 'polls' && (
-                      <PollsAndQuizzes
+                      <EnhancedPollsAndQuizzes
                         meetingId={meetingId}
                         isHost={isHost}
                         participants={allParticipants}
@@ -1537,7 +1540,7 @@ const VideoConferenceEnhanced: React.FC<VideoConferenceProps> = ({
                     )}
 
                     {sidebarContent === 'roleplay' && (
-                      <RolePlay
+                      <EnhancedRolePlay
                         meetingId={meetingId}
                         isHost={isHost}
                         participants={allParticipants}
