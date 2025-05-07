@@ -414,7 +414,7 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                     id="poll-title"
                     placeholder="Enter poll title"
                     value={newPoll.title}
-                    onChange={(e: { target: { value: any; }; }) => setNewPoll((prev: any) => ({ ...prev, title: e.target.value }))}
+                    onChange={(e) => setNewPoll((prev) => ({ ...prev, title: e.target.value }))}
                     className="focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                     autoFocus
                   />
@@ -426,7 +426,7 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                     id="poll-description"
                     placeholder="Enter poll description"
                     value={newPoll.description || ""}
-                    onChange={(e: { target: { value: any; }; }) => setNewPoll((prev: any) => ({ ...prev, description: e.target.value }))}
+                    onChange={(e) => setNewPoll((prev) => ({ ...prev, description: e.target.value }))}
                     className="min-h-[80px] focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -462,7 +462,7 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                           <Input
                             placeholder={`Option ${index + 1}`}
                             value={option.text}
-                            onChange={(e: { target: { value: string; }; }) => updateOptionText(index, e.target.value)}
+                            onChange={(e) => updateOptionText(index, e.target.value)}
                             className="focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                           />
                           <Button
@@ -491,8 +491,8 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                     <Checkbox
                       id="anonymous"
                       checked={newPoll.isAnonymous}
-                      onCheckedChange={(checked: boolean) =>
-                        setNewPoll((prev: any) => ({ ...prev, isAnonymous: checked === true }))
+                      onCheckedChange={(checked) =>
+                        setNewPoll((prev) => ({ ...prev, isAnonymous: checked === true }))
                       }
                     />
                     <label htmlFor="anonymous" className="text-sm font-medium">
@@ -504,8 +504,8 @@ const PollsAndQuizzes: React.FC<PollsAndQuizzesProps> = ({
                     <Checkbox
                       id="show-results"
                       checked={newPoll.showResultsImmediately}
-                      onCheckedChange={(checked: boolean) =>
-                        setNewPoll((prev: any) => ({ ...prev, showResultsImmediately: checked === true }))
+                      onCheckedChange={(checked) =>
+                        setNewPoll((prev) => ({ ...prev, showResultsImmediately: checked === true }))
                       }
                     />
                     <label htmlFor="show-results" className="text-sm font-medium">

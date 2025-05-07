@@ -1154,7 +1154,7 @@ const LanguageTools: React.FC<LanguageToolsProps> = ({ meetingId }) => {
             <div className="relative">
               <Input
                 value={inputText}
-                onChange={handleInputChange}
+                onChange={(e) => setInputText(e.target.value)}
                 placeholder="Type or use the character pad below"
                 className="pr-20 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                 autoFocus
@@ -1286,9 +1286,9 @@ const LanguageTools: React.FC<LanguageToolsProps> = ({ meetingId }) => {
                 <div className="relative flex-1">
                   <Input
                     value={searchTerm}
-                    onChange={(e: { target: { value: any; }; }) => setSearchTerm(e.target.value)}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder={`Search ${availableLanguages.find(lang => lang.id === dictionaryLanguage)?.name || ""} dictionary`}
-                    onKeyDown={(e: { key: string; }) => e.key === 'Enter' && searchDictionary()}
+                    onKeyDown={(e) => e.key === 'Enter' && searchDictionary()}
                     className="focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                     autoFocus
                   />

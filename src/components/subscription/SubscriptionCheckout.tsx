@@ -111,20 +111,23 @@ const SubscriptionCheckout = ({
           // Create a form to submit to Stripe Checkout
           const form = document.createElement('form');
           form.method = 'POST';
-          form.action = 'https://checkout.stripe.com/pay';
-          form.target = '_blank';
+          form.action = 'https://checkout.stripe.com/create-checkout-session';
+          form.target = '_self'; // Changed to _self to redirect in the same window
 
           // Add necessary fields
           const fields = {
-            'amount': Math.round(parseFloat(getPrice()) * 100), // Convert to cents
-            'currency': 'usd',
-            'description': `${planType.charAt(0).toUpperCase() + planType.slice(1)} Plan (${billingCycle})`,
-            'key': 'pk_test_sample', // This would be your actual publishable key
-            'name': 'ElMeet',
-            'email': user.email,
+            'price_data[currency]': 'usd',
+            'price_data[unit_amount]': Math.round(parseFloat(getPrice()) * 100), // Convert to cents
+            'price_data[product_data][name]': `${planType.charAt(0).toUpperCase() + planType.slice(1)} Plan (${billingCycle})`,
+            'line_items[0][quantity]': 1,
+            'mode': 'subscription',
+            'payment_method_types[]': 'card',
+            'customer_email': user.email,
             'client_reference_id': user.email,
             'success_url': window.location.origin + '/profile?payment_success=true',
-            'cancel_url': window.location.origin + '/profile?payment_canceled=true'
+            'cancel_url': window.location.origin + '/profile?payment_canceled=true',
+            'billing_address_collection': 'required',
+            'allow_promotion_codes': 'true'
           };
 
           // Add fields to form
@@ -181,18 +184,24 @@ const SubscriptionCheckout = ({
           const form = document.createElement('form');
           form.method = 'POST';
           form.action = 'https://www.paypal.com/cgi-bin/webscr';
-          form.target = '_blank';
+          form.target = '_self'; // Changed to _self to redirect in the same window
 
           // Add necessary fields
           const fields = {
-            'cmd': '_xclick',
-            'business': 'merchant@elmeet.com', // Your PayPal business email
+            'cmd': '_xclick-subscriptions',
+            'business': 'sb-43faib25951715@business.example.com', // PayPal sandbox business email
             'item_name': `ElMeet ${planType.charAt(0).toUpperCase() + planType.slice(1)} Plan (${billingCycle})`,
-            'amount': getPrice(),
             'currency_code': 'USD',
+            'a3': getPrice(), // Regular subscription price
+            'p3': billingCycle === 'monthly' ? '1' : '12', // Billing cycle (1 month or 12 months)
+            't3': 'M', // M for months
+            'src': '1', // Recurring payments
+            'sra': '1', // Reattempt on failure
+            'no_note': '1',
             'return': window.location.origin + '/profile?payment_success=true',
             'cancel_return': window.location.origin + '/profile?payment_canceled=true',
-            'custom': user.email
+            'custom': user.email,
+            'notify_url': window.location.origin + '/api/paypal-ipn'
           };
 
           // Add fields to form
